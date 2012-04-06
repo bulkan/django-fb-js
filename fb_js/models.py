@@ -1,10 +1,14 @@
 """ This code is from https://github.com/jgorset/fandjango
 """
+import requests
+
+from datetime import datetime
 
 from django.db import models
+from django.utils.translation import ugettext as _
 from facepy import GraphAPI
 
-from fb_js.utils import cached
+from fb_js.utils import cached_property as cached
 
 class User(models.Model):
     """
@@ -32,9 +36,6 @@ class User(models.Model):
 
     authorized = models.BooleanField(_('authorized'), default=True)
     """A boolean describing whether the user has currently authorized the application."""
-
-    oauth_token = models.OneToOneField('OAuthToken', verbose_name=_('OAuth token'))
-    """An ``OAuthToken`` object."""
 
     created_at = models.DateTimeField(_('created at'), auto_now_add=True)
     """A ``datetime`` object describing when the user was registered."""
@@ -171,13 +172,13 @@ class User(models.Model):
         return permissions
 
     @property
-    def graph(self):
+    def graph(self, token):
         """
         A ``Facepy.GraphAPI`` instance initialized with the user's access token (See `Facepy`_).
 
         .. _Facepy: http://github.com/jgorset/facepy
         """
-        return GraphAPI(self.oauth_token.token)
+        return GraphAPI(token)
 
     def synchronize(self):
         """
