@@ -191,6 +191,7 @@ class User(models.Model):
         self.first_name = profile.get('first_name')
         self.middle_name = profile.get('middle_name')
         self.last_name = profile.get('last_name')
+        self.emaile = profile.get('email')
         self.birthday = datetime.strptime(profile['birthday'], '%m/%d/%Y') if profile.has_key('birthday') else None
         self.save()
 
@@ -205,3 +206,24 @@ class User(models.Model):
     class Meta:
         verbose_name = _('user')
         verbose_name_plural = _('users')
+
+
+def create_user(request, profile):
+    try:
+       user = User.objects.get(facebook_id=request.REQUEST.get('user_id'))
+    except User.DoesNotExist:
+
+        #access_token = request.REQUEST.get('accessToken', '')
+        
+        user = User.objects.create(
+            facebook_id = profile.get('id'),
+            facebook_username = profile.get('username'),
+            first_name = profile.get('first_name'),
+            middle_name = profile.get('middle_name'),
+            last_name = profile.get('last_name'),
+            email = profile.get('email'),
+            birthday = datetime.strptime(profile['birthday'], '%m/%d/%Y') if profile.has_key('birthday') else None,
+            )
+        user.save()
+
+    return user
