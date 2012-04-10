@@ -1,3 +1,9 @@
+"""
+    This code is from
+    https://github.com/jgorset/fandjango/tree/master/fandjango
+"""
+
+
 from django import template
 from django.conf import settings
 register = template.Library()
